@@ -1,0 +1,53 @@
+#!/bin/bash
+
+workdir=$(pwd)
+cd $(dirname $0)
+platform=$(basename $0)
+
+if [ "$platform" == "container" ]; then
+  echo "Please start using a symlink with for te relevant platform (opencode, codex, etc)"
+  exit 1
+fi
+
+if [ ! -f .env ]; then
+  cp .env.example .env
+fi
+
+
+container_tag=aigent.$platform
+container_name=aigent.$platform
+docker_cmd="docker run --rm --tty --interactive --env-file .env"
+docker_cmd+=" --volume ./home/:/home/aigent"
+docker_cmd+=" --volume $workdir:/home/aigent/workdir --workdir /home/aigent/workdir"
+
+case $1 in
+  "build" | "rebuild")
+    docker build --tag aigent.base --file ./Dockerfile.base \
+      --build-arg USER_UID=$(id -u) \
+      --build-arg USER_GID=$(id -g) \
+      --build-arg DOCKER_GID=$(getent group docker | cut -d: -f3) \
+      .
+
+    if [ $? -ne 0 ]; then exit $? ; fi
+
+    docker build --tag $container_tag --file ./Dockerfile.$platform .
+    exit $?
+  ;;
+
+  "shell")
+    shift
+    $docker_cmd --entrypoint /bin/bash $container_tag $@
+    exit $?
+  ;;
+
+  *)
+    running=$(docker ps --quiet --filter name=$container_name)
+    if [ "$running" != "" ]; then
+      docker stop $container_name > /dev/null
+      docker rm $container_name > /dev/null 2>&1
+    fi
+
+    $docker_cmd --name $container_name $container_tag $@
+    exit $?
+  ;;
+esac

@@ -1,0 +1,28 @@
+FROM archlinux:latest
+
+ARG USERNAME=aigent
+ARG USER_UID=1000
+ARG USER_GID=985
+ARG DOCKER_GID=970
+
+RUN pacman -Sy --noconfirm archlinux-keyring && pacman -Syu --noconfirm \
+ && pacman -Sy --noconfirm bash curl wget git ca-certificates unzip zip tar jq yq tree
+
+RUN pacman -Sy --noconfirm base-devel cmake ninja pkgconf \
+ && pacman -Sy --noconfirm ripgrep fd fzf tmux neovim openssh make which \
+ && pacman -Sy --noconfirm docker docker-compose
+
+RUN pacman -Sy --noconfirm nodejs-lts-iron npm yarn pnpm \
+ && pacman -Sy --noconfirm shellcheck shfmt prettier eslint \
+ && pacman -Sy --noconfirm go delve
+
+RUN pacman -Scc --noconfirm
+
+RUN useradd -u ${USER_UID} -g ${USER_GID} -G ${DOCKER_GID} ${USERNAME} \
+ && echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+USER aigent
+WORKDIR /home/${USERNAME}
+
+ENV HOME=/home/${USERNAME}
+ENV EDITOR=nvim

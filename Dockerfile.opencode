@@ -1,0 +1,6 @@
+FROM aigent.base:latest
+
+RUN sudo npm install -g opencode-ai@latest
+
+USER aigent
+ENTRYPOINT ["opencode"]
