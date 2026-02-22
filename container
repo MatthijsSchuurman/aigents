@@ -17,8 +17,10 @@ fi
 container_tag=aigent.$platform
 container_name=aigent.$platform
 docker_cmd="docker run --rm --tty --interactive --env-file .env"
+docker_cmd+=" --add-host=host.docker.internal:host-gateway"
 docker_cmd+=" --volume ./home/:/home/aigent"
 docker_cmd+=" --volume $workdir:/home/aigent/workdir --workdir /home/aigent/workdir"
+docker_cmd+=" --network all"
 
 case $1 in
   "build" | "rebuild")
@@ -41,13 +43,14 @@ case $1 in
   ;;
 
   *)
-    running=$(docker ps --quiet --filter name=$container_name)
-    if [ "$running" != "" ]; then
-      docker stop $container_name > /dev/null
-      docker rm $container_name > /dev/null 2>&1
-    fi
-
-    $docker_cmd --name $container_name $container_tag $@
+    # running=$(docker ps --quiet --filter name=$container_name)
+    # if [ "$running" != "" ]; then
+    #   docker stop $container_name > /dev/null
+    #   docker rm $container_name > /dev/null 2>&1
+    # fi
+    #
+    # $docker_cmd --name $container_name $container_tag $@
+    $docker_cmd $container_tag $@
     exit $?
   ;;
 esac
