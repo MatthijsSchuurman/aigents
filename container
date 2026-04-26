@@ -16,7 +16,11 @@ fi
 
 container_tag=aigent.$platform
 container_name=aigent.$platform
-docker_cmd="docker run --rm --tty --interactive --env-file .env"
+docker_cmd="docker run --rm --interactive --env-file .env"
+if [ -t 0 ]; then # Terminal
+  docker_cmd+=" --tty"
+fi
+
 docker_cmd+=" --add-host=host.docker.internal:host-gateway"
 docker_cmd+=" --volume ./home/:/home/aigent"
 docker_cmd+=" --volume $workdir:/home/aigent/workdir --workdir /home/aigent/workdir"
