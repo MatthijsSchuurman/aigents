@@ -1,6 +1,6 @@
 FROM aigent.base:latest
 
-RUN sudo npm install -g opencode-ai@latest
+RUN sudo npm install -g --allow-scripts=opencode-ai opencode-ai@latest
 
 USER aigent
 ENTRYPOINT ["opencode"]
