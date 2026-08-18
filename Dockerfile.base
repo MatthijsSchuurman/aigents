@@ -16,7 +16,7 @@ RUN pacman -Sy --noconfirm ripgrep fd fzf tmux neovim which less bat sed sd choo
  && pacman -Sy --noconfirm jq yq fx hexyl \
  && pacman -Sy --noconfirm tree eza broot zoxide git-delta lazygit
 
-RUN pacman -Sy --noconfirm nodejs-lts-iron npm yarn pnpm \
+RUN pacman -Sy --noconfirm nodejs-lts-krypton npm yarn pnpm \
  && pacman -Sy --noconfirm shellcheck shfmt prettier eslint \
  && pacman -Sy --noconfirm go delve
 
