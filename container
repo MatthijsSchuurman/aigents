@@ -42,7 +42,7 @@ case $1 in
 
   "shell")
     shift
-    $docker_cmd --entrypoint /bin/bash $container_tag $@
+    $docker_cmd --entrypoint /bin/bash $container_tag "$@"
     exit $?
   ;;
 
@@ -53,8 +53,8 @@ case $1 in
     #   docker rm $container_name > /dev/null 2>&1
     # fi
     #
-    # $docker_cmd --name $container_name $container_tag $@
-    $docker_cmd $container_tag $@
+    # $docker_cmd --name $container_name $container_tag "$@"
+    $docker_cmd $container_tag "$@"
     exit $?
   ;;
 esac
