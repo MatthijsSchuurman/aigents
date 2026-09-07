@@ -1,5 +1,5 @@
 FROM aigent.base:latest
 
-RUN sudo npm install -g @anthropic-ai/claude-code
+RUN sudo npm install -g @anthropic-ai/claude-code@latest
 
 ENTRYPOINT ["claude"]

@@ -1,6 +1,6 @@
 FROM aigent.base:latest
 
-RUN sudo npm install -g @openai/codex
+RUN sudo npm install -g @openai/codex@latest
 
 USER aigent
 ENTRYPOINT ["codex"]

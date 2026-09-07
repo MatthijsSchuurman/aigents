@@ -1,6 +1,6 @@
 FROM aigent.base:latest
 
-RUN sudo npm install -g @google/gemini-cli
+RUN sudo npm install -g @google/gemini-cli@latest
 
 USER aigent
 ENTRYPOINT ["gemini"]
