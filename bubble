@@ -1,0 +1,40 @@
+#!/bin/bash
+
+workdir=$(pwd)
+aigentdir=$(dirname $0)
+platform=$(basename $0)
+
+bubblewrap_cmd="bwrap
+ --ro-bind /usr /usr
+ --ro-bind /lib /lib
+ --ro-bind /lib64 /lib64
+ --ro-bind /etc/resolv.conf /etc/resolv.conf
+ --ro-bind /etc/ssl /etc/ssl
+ --symlink usr/bin /bin
+ --proc /proc
+ --dev /dev
+ --tmpfs /tmp
+ --die-with-parent
+ --new-session
+ --cap-drop ALL
+ --hostname aigent
+ --unshare-all
+ --share-net
+ --bind $aigentdir/home /home/aigent
+ --bind $workdir /home/aigent/workdir
+ --chdir /home/aigent/workdir
+ --clearenv
+ --setenv HOME /home/aigent \
+ --setenv USER aigent \
+ --setenv PATH /home/aigent/.npm-global/bin:$PATH
+"
+
+$bubblewrap_cmd mkdir -p /home/aigent/.npm-global
+$bubblewrap_cmd npm config set prefix /home/aigent/.npm-global
+$bubblewrap_cmd npm install --global --ignore-scripts @earendil-works/pi-coding-agent@latest
+
+if [ -z "$1" ]; then
+  $bubblewrap_cmd /bin/bash
+else
+  $bubblewrap_cmd "$@"
+fi
