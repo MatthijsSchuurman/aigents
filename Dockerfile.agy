@@ -1,0 +1,6 @@
+FROM aigent.base:latest
+
+RUN curl -fsSL https://antigravity.google/cli/install.sh | sudo bash -s -- --dir /usr/local/bin
+
+USER aigent
+ENTRYPOINT ["agy"]
