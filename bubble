@@ -10,6 +10,7 @@ bubblewrap_cmd="bwrap
  --ro-bind /lib64 /lib64
  --ro-bind /etc/resolv.conf /etc/resolv.conf
  --ro-bind /etc/ssl /etc/ssl
+ --ro-bind /etc/ca-certificates /etc/ca-certificates
  --symlink usr/bin /bin
  --proc /proc
  --dev /dev
@@ -17,7 +18,6 @@ bubblewrap_cmd="bwrap
  --die-with-parent
  --new-session
  --cap-drop ALL
- --hostname aigent
  --unshare-all
  --share-net
  --bind $aigentdir/home /home/aigent
@@ -26,15 +26,44 @@ bubblewrap_cmd="bwrap
  --clearenv
  --setenv HOME /home/aigent \
  --setenv USER aigent \
- --setenv PATH /home/aigent/.npm-global/bin:$PATH
+ --setenv PATH /bin:/usr/bin:/usr/local/bin:/home/aigent/.npm-global/bin:/home/aigent/go/bin \
 "
 
-$bubblewrap_cmd mkdir -p /home/aigent/.npm-global
-$bubblewrap_cmd npm config set prefix /home/aigent/.npm-global
-$bubblewrap_cmd npm install --global --ignore-scripts @earendil-works/pi-coding-agent@latest
+case $1 in
+  "build" | "rebuild")
+    $bubblewrap_cmd mkdir -p /home/aigent/.npm-global
+    $bubblewrap_cmd npm config set prefix /home/aigent/.npm-global
 
-if [ -z "$1" ]; then
-  $bubblewrap_cmd /bin/bash
-else
-  $bubblewrap_cmd "$@"
-fi
+    case $platform in
+      "agy")
+        $bubblewrap_cmd curl -fsSL https://antigravity.google/cli/install.sh | bash
+      ;;
+      "claude")
+        $bubblewrap_cmd npm install --global @anthropic-ai/claude-code@latest
+      ;;
+      "codex")
+        $bubblewrap_cmd npm install --global @openai/codex@latest
+      ;;
+      "gemini")
+        $bubblewrap_cmd npm install --global @google/gemini-cli@latest
+      ;;
+      "opencode")
+        $bubblewrap_cmd npm install --global --allow-scripts=opencode-ai opencode-ai@latest
+      ;;
+      "pi")
+        $bubblewrap_cmd npm install --global --ignore-scripts @earendil-works/pi-coding-agent@latest
+      ;;
+    esac
+
+    exit $?
+  ;;
+  "shell")
+    shift
+    $bubblewrap_cmd /bin/bash
+    exit $?
+  ;;
+  *)
+    $bubblewrap_cmd $platform "$@"
+    exit $?
+  ;;
+esac
