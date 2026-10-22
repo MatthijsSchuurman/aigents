@@ -48,7 +48,7 @@ case $1 in
         $bubblewrap_cmd npm install --global @google/gemini-cli@latest
       ;;
       "opencode")
-        $bubblewrap_cmd npm install --global --allow-scripts=opencode-ai opencode-ai@latest
+        $bubblewrap_cmd npm install --global --allow-scripts=@opencode/cli @opencode/cli
       ;;
       "pi")
         $bubblewrap_cmd npm install --global --ignore-scripts @earendil-works/pi-coding-agent@latest
