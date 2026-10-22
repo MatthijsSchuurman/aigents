@@ -65,10 +65,11 @@ case $1 in
   *)
     case $platform in
       "opencode")
-        $bubblewrap_cmd $platform --standalone "$@"
-      ;;
-      *)
-        $bubblewrap_cmd $platform "$@"
+        if [ $# -gt 0 ]; then
+          $bubblewrap_cmd $platform "$@"
+        else
+          $bubblewrap_cmd $platform --standalone
+        fi
       ;;
     esac
 
