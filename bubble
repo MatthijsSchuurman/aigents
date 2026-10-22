@@ -63,7 +63,15 @@ case $1 in
     exit $?
   ;;
   *)
-    $bubblewrap_cmd $platform "$@"
+    case $platform in
+      "opencode")
+        $bubblewrap_cmd $platform --standalone "$@"
+      ;;
+      *)
+        $bubblewrap_cmd $platform "$@"
+      ;;
+    esac
+
     exit $?
   ;;
 esac
